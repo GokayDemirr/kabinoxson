@@ -1,18 +1,12 @@
-"use client";
 import Link from "next/link";
 import Navbar from "./Navbar";
-import { useScrollPosition } from "@/hooks/useScrollPosition";
+import Logo from "./Logo";
 
 export default function Header() {
-  const isScrolled = useScrollPosition();
   return (
-    <header
-      className={`flex justify-between z-10 text-white fixed top-0 left-0 right-0 p-6 transition-colors duration-300 ${
-        isScrolled ? "bg-custom-black " : ""
-      }`}
-    >
+    <header className="absolute  w-full p-4 flex justify-between items-center bg-black/50  z-10">
       <Link href="/">
-        <h1>KABINOX</h1>
+        <Logo width={256} height={256} />
       </Link>
       <Navbar />
     </header>
