@@ -34,7 +34,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
   }, [handleNextImage]);
 
   return (
-    <div className="relative w-full h-full sm:h-[50vh] md:h-[60vh] mt-24">
+    <div className="relative w-full h-full sm:h-[50vh] md:h-[60vh] mt-24 ">
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -55,16 +55,6 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
           </div>
         ))}
       </div>
-      <HeroImageNavigationButton
-        direction="prev"
-        onClick={handlePrevImage}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2"
-      />
-      <HeroImageNavigationButton
-        direction="next"
-        onClick={handleNextImage}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2"
-      />
     </div>
   );
 };

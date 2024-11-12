@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 
+interface DimensionPriceOption {
+  dimension: { min: string; max: string };
+  color1Price: string;
+  color2Price: string;
+  color3Price: string;
+}
+
 interface PriceCalculatorProps {
   product: {
     cornerShape: string;
@@ -31,8 +38,7 @@ interface PriceCalculatorProps {
     dimensionPrices: {
       option1: DimensionPriceOption;
       option2: DimensionPriceOption;
-
-      // ... Diğer optionlar
+      // Other options can go here
     };
     glassThicknessPricing: {
       glassThicknessExtra: string;
@@ -40,13 +46,6 @@ interface PriceCalculatorProps {
     }[];
   };
   closeModal: () => void;
-}
-
-interface DimensionPriceOption {
-  dimension: { min: string; max: string };
-  color1Price: string;
-  color2Price: string;
-  color3Price: string;
 }
 
 const PriceCalculator: React.FC<PriceCalculatorProps> = ({
@@ -66,9 +65,15 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const [glassColorOption, setGlassColorOption] = useState<string>("");
   const [cabinetColorOption, setCabinetColorOption] = useState<string>("");
   const [glassThicknessOption, setGlassThicknessOption] = useState<string>("");
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const handleSubmit = () => {
-    closeModal(); // Close the modal after calculation
+    setShowConfirmationModal(true); // Show confirmation modal when button is clicked
+  };
+
+  const closeConfirmationModal = () => {
+    setShowConfirmationModal(false); // Close the confirmation modal
+    closeModal(); // Close the price calculator modal
   };
 
   const sortedMaintenancePrices = product.maintenancePrices
@@ -206,11 +211,11 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
   return (
     <div className="fixed inset-0 flex justify-center items-center  bg-gray-500 bg-opacity-75">
-      <div className="bg-white w-1/4 p-4 rounded-md">
+      <div className="bg-white w-1/4 p-4 rounded-md relative">
         {/* Modal close button positioned outside the modal content */}
         <button
           onClick={closeModal}
-          className="absolute top-4 right-4 text-xl text-red-500 font-bold"
+          className="absolute top-8 right-6 text-2xl text-red-500 font-bold"
         >
           X
         </button>
@@ -498,6 +503,22 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           Teklif Ver
         </button>
       </div>
+      {/* Confirmation Modal */}
+      {showConfirmationModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75">
+          <div className="bg-white w-1/4 p-4 rounded-md text-center">
+            <h2 className="text-xl font-bold">
+              Teklifiniz başarıyla verilmiştir.
+            </h2>
+            <button
+              onClick={closeConfirmationModal}
+              className="bg-blue-500 text-white p-2 rounded-md mt-4 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Tamam
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

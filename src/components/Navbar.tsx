@@ -12,12 +12,12 @@ export default function Navbar() {
         </li>
         <li className="mx-2">
           <Link href="/kabinini-tasarla" className="hover:text-custom-teal">
-            Kabinini Tasarla
+            Kabinimi Bul
           </Link>
         </li>
         <li className="mx-2">
-          <Link href="/urunler" className="hover:text-custom-teal">
-            Ürünler
+          <Link href="/tasarimlarimiz" className="hover:text-custom-teal">
+            Tasarımlarımız
           </Link>
         </li>
         <li className="mx-2">

@@ -21,11 +21,15 @@ interface Product {
   easyCleanPrice: string;
   montagePrices: any;
   maintenancePrices: any;
-  centerMontagePrice: string;
+  centerMontagePrice: number;
   gif: string;
   glassColorPrices: any;
   heightPrices: any;
-  dimensionPrices: any;
+  dimensionPrices: {
+    option1: DimensionPriceOption;
+    option2: DimensionPriceOption;
+    // Add more options as needed
+  };
   glassThicknessPricing: any;
 }
 
@@ -109,7 +113,7 @@ const ProductDetail: React.FC = () => {
   }, [id]);
 
   const handleNextImage = () => {
-    if (product && product.images) {
+    if (product) {
       setCurrentImageIndex((prevIndex) =>
         prevIndex === product.images.length - 1 ? 0 : prevIndex + 1
       );
@@ -117,7 +121,7 @@ const ProductDetail: React.FC = () => {
   };
 
   const handlePreviousImage = () => {
-    if (product && product.images) {
+    if (product) {
       setCurrentImageIndex((prevIndex) =>
         prevIndex === 0 ? product.images.length - 1 : prevIndex - 1
       );
@@ -171,8 +175,8 @@ const ProductDetail: React.FC = () => {
             </div>
             <div className="flex flex-col  ">
               <Image
-                src={product?.images[currentImageIndex] || ""}
-                alt={product?.seriesName || "Product Image"}
+                src={product.images[currentImageIndex]}
+                alt={product.seriesName}
                 width={600}
                 height={600}
                 className="mb-4 rounded-xl w-full object-cover"
@@ -266,28 +270,34 @@ const ProductDetail: React.FC = () => {
                   </td>
                 </tr>
                 <tr className="border-b hover:bg-gray-50">
-                  <td className="p-1">Montaj Ücreti</td>
-                  <td className="p-1">: {product.centerMontagePrice}</td>
+                  <td className="p-1">Kabin Yüksekliği</td>
+                  <td className="p-1">
+                    :{" "}
+                    {product.heightOptions
+                      .map((option: number) => `${option}cm`)
+                      .join(" - ")}
+                  </td>
                 </tr>
-                <tr className="border-b hover:bg-gray-50">
-                  <td className="p-1">Yükseklik</td>
-                  <td className="p-1">: {product.heightOptions.join(" - ")}</td>
-                </tr>
-                {product.easyCleanPrice && (
-                  <tr className="border-b hover:bg-gray-50">
-                    <td className="p-1">Kolay Temizlik</td>
-                    <td className="p-1">: {product.easyCleanPrice}</td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
 
-          <div className="w-full sm:w-60 mt-8">
-            <PriceCalculator product={product} closeModal={closeModal} />
+          <div className="flex flex-col w-full lg:w-1/2 lg:items-start items-center ">
+            <div className="mt-auto">
+              <button
+                onClick={openModal}
+                className="bg-gray-500 p-2 rounded-md text-white hover:bg-gray-600 fhdustu:w-96 fhdustu:text-2xl "
+              >
+                Fiyat Hesapla
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <PriceCalculator product={product} closeModal={closeModal} />
+      )}
     </div>
   );
 };
