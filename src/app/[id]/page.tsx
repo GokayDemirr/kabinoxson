@@ -8,6 +8,13 @@ import { FiArrowLeft } from "react-icons/fi";
 import PriceCalculator from "@/components/PriceCalculator";
 import IconComponent from "@/components/IconComponent";
 
+interface DimensionPriceOption {
+  dimension: { min: string; max: string };
+  color1Price: string;
+  color2Price: string;
+  color3Price: string;
+}
+
 interface Product {
   id: string;
   seriesName: string;
@@ -21,7 +28,7 @@ interface Product {
   easyCleanPrice: string;
   montagePrices: any;
   maintenancePrices: any;
-  centerMontagePrice: number;
+  centerMontagePrice: string;
   gif: string;
   glassColorPrices: any;
   heightPrices: any;
