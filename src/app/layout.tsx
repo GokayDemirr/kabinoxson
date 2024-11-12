@@ -2,25 +2,24 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Kabinox | Paslanmaz Duşkabinin Tek Adresi",
   description: "Paslanmaz Duşkabinin Tek Adresi",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className}`}>
         <Header />
-        {children}
+        <main>{children}</main>
       </body>
     </html>
   );

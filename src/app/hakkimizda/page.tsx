@@ -1,41 +1,58 @@
-import Article from "@/components/AboutArticle";
-import MailIcon from "@/components/MailIcon";
-import TraitCard from "@/components/TraitCard";
 import Image from "next/image";
 
 export default function About() {
-  const traitCardsData = [
-    { icon: MailIcon, description: "Bu bir örnek yazıdır." },
-    { icon: MailIcon, description: "Bu bir örnek yazıdır." },
-    { icon: MailIcon, description: "Bu bir örnek yazıdırrr." },
-  ];
   return (
-    <div className="flex flex-col mt-36  ">
-      <div className="flex justify-between items-start">
-        <Article
-          title="Hakkımızda"
-          content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur tempora, maxime at provident ipsa praesentium nihil nobis excepturi voluptates recusandae! Quasi asperiores rem ea explicabo repudiandae eum voluptatem dolor eos?"
-        />
-        <div className="relative w-[400px] h-[300px] ml-8">
+    <section className="relative w-full min-h-screen flex flex-col sm:items-center sm:justify-center text-white p-4 ">
+      <div className="flex lg:flex-row-reverse  flex-col w-full justify-center items-center gap-8 ">
+        {/* Right Image (reversed in flex) */}
+        <div className="relative w-full mt-24 md:w-2/5 md:mt-24 lg:w-3/5 sm:mt-24 sm:w-3/5 deneme:w-3/5">
           <Image
-            src="/kabin1.jpg" // public klasöründeki resmin yolu
-            alt="About Us Image"
-            layout="fill" // Resmi bulunduğu container'ın boyutuna göre ayarlar
-            objectFit="cover" // Resmi container'ın boyutlarına göre ayarlar, kırpma yapabilir
-            className="image-with-gradient"
+            src="/hakkimizda.jpeg"
+            alt="About Us Image Left"
+            layout="responsive"
+            width={100}
+            height={100}
+            objectFit="cover"
+            className="rounded-3xl shadow-lg"
           />
         </div>
+
+        {/* Left Text with Justified Alignment */}
+        <div className="w-full flex flex-col justify-center items-center lg:items-start	gap-4 fhdustu:gap-16 text-justify leading-relaxed space-y-4  bg-white/50  text-black">
+          <h1 className="tracking-widest  lg:text-3xl font-light lg:mt-12 sm:text-2xl text-2xl fhdustu:text-6xl ">
+            HAKKIMIZDA
+          </h1>
+          <p className="lg:text-lg md:text-base text-base fhdustu:text-3xl">
+            KABİNOX Markası 2024 yılı içerisinde tescillenmiş SR Design
+            markasıdır. SR Design Firması, Serdar Turgut tarafından 2021 yılında
+            resmi şirket kuruluşunu yapmış 17 yıllık bir markadır. Bir çok
+            yurtiçi ve yurtdışı projelerde nitelikli ürün tasarımları ve
+            imalatlarını yapmıştır.
+          </p>
+          <p className="lg:text-lg md:text-base text-base fhdustu:text-3xl">
+            SR Design tüm ürünlerin mekanik tasarımlarını kendi bünyesinde
+            yapmaktadır. SR Design ayrıca Matto Bagno markasının da kurucusu ve
+            sahibidir. Matto Bagno alüminyum profilli ileri teknoloji duş
+            kabinlerini üretiyor.
+          </p>
+          <p className="lg:text-lg md:text-base text-base fhdustu:text-3xl">
+            Kabinox ise paslanmaz çelik ve özel renk kaplamalı ürün seçenekleri
+            sunan, üst segment ürün grubu ile standart ve özel tasarım ürünler
+            üretmektedir. 17 yıllık Ar-Ge ve mühendislik tecrübesi
+            markalarımızın asıl kimliğini yansıtmaktadır.
+          </p>
+          <p className="lg:text-lg md:text-base text-base fhdustu:text-3xl">
+            Sürekli iyileştirme, geliştirme, mühendislik ve müşteri odaklı
+            tasarım gibi bir çok başlık ile ilerleyen yıllarda atılacak adımlar
+            2020 yılında belirlenmiştir. Her yıl farklı bir yenilikle sektörün
+            ihtiyaç duyduğu vizyonumuz hazırdır.
+          </p>
+          <p className="lg:text-lg md:text-base text-base fhdustu:text-3xl">
+            Daha fazlasını hayal etmenizden ve çılgın banyo tasarımlarınıza
+            yenilikçi çözümler üretmekten keyif alıyoruz..
+          </p>
+        </div>
       </div>
-      <div className="flex mt-32 justify-center gap-64">
-        {traitCardsData.map((trait, index) => (
-          <TraitCard
-            key={index}
-            IconComponent={trait.icon}
-            iconWidth="64px"
-            description={trait.description}
-          />
-        ))}
-      </div>
-    </div>
+    </section>
   );
 }

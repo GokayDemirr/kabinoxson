@@ -1,29 +1,23 @@
+// Navbar.tsx
 import Link from "next/link";
-import Logo from "./Logo";
 
 export default function Navbar() {
   return (
-    <nav>
-      <ul className="flex flex-wrap justify-center  gap-12 text-white">
+    <nav className="hidden lg:block">
+      <ul className="flex flex-wrap justify-center gap-12 text-custom-black fhdustu:text-2xl">
+        <li className="mx-2">
+          <Link href="/kabinoxkatalog2025" className="hover:text-custom-teal">
+            Katalog
+          </Link>
+        </li>
         <li className="mx-2">
           <Link href="/kabinini-tasarla" className="hover:text-custom-teal">
             Kabinini Tasarla
           </Link>
         </li>
         <li className="mx-2">
-          <Link href="/tasarimlarimiz" className="hover:text-custom-teal">
-            Tasarımlarımız
-          </Link>
-        </li>
-        <li className="mx-2">
-          <Link href="/teknolojilerimiz" className="hover:text-custom-teal">
-            Teknolojilerimiz
-          </Link>
-        </li>
-
-        <li className="mx-2">
-          <Link href="/hizmetlerimiz" className="hover:text-custom-teal">
-            Hizmetlerimiz
+          <Link href="/urunler" className="hover:text-custom-teal">
+            Ürünler
           </Link>
         </li>
         <li className="mx-2">
