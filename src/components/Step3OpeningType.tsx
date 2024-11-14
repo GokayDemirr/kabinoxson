@@ -8,8 +8,8 @@ interface Step3Props {
 }
 
 const openingTypes = [
-  { label: "Menteşeli", gif: "/menteseli.gif", value: "menteseli" },
-  { label: "Sürgülü", gif: "/surgulu.gif", value: "surgulu" },
+  { label: "Menteşeli", gif: "/menteseliyeni.gif", value: "menteseli" },
+  { label: "Sürgülü", gif: "/surguluyeni.gif", value: "surgulu" },
 ];
 
 const Step3OpeningType: React.FC<Step3Props> = ({
@@ -36,9 +36,9 @@ const Step3OpeningType: React.FC<Step3Props> = ({
           <Image
             src={type.gif}
             alt={type.label}
-            width={96} // Reduced size for smaller screens
-            height={96} // Reduced size for smaller screens
-            className="mx-auto mb-1 sm:mb-2 object-cover sm:w-32 sm:h-32 md:w-40 md:h-40"
+            width={128} // Reduced size for smaller screens
+            height={128} // Reduced size for smaller screens
+            className=" mb-2 w-32 h-32 sm:w-48 sm:h-48 md:w-128 md:h-128   "
             unoptimized
           />
           <span className="text-xs sm:text-sm md:text-base">{type.label}</span>

@@ -62,6 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 width={128}
                 height={128}
                 className="object-cover transform scale-105 rounded-md"
+                unoptimized
               />
             </div>
           ) : null}

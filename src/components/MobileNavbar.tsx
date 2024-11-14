@@ -24,7 +24,7 @@ export default function MobileNavbar() {
         <ul className="absolute top-full left-0 w-full bg-custom-color6  flex flex-col items-center gap-4 py-4 text-custom-black shadow-lg z-50">
           <li>
             <Link
-              href="/kabinini-tasarla"
+              href="/kabinoxkatalog2025"
               className="w-full text-center hover:text-custom-teal"
             >
               Katalog

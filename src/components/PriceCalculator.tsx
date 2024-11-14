@@ -211,40 +211,83 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
   return (
     <div className="fixed inset-0 flex justify-center items-center  bg-gray-500 bg-opacity-75">
-      <div className="bg-white w-1/4 p-4 rounded-md relative">
-        {/* Modal close button positioned outside the modal content */}
-        <button
-          onClick={closeModal}
-          className="absolute top-8 right-6 text-2xl text-red-500 font-bold"
-        >
-          X
-        </button>
-
-        <div className="text-2xl tracking-wider text-center mt-12">
+      <div className="bg-white w-full max-w-md md:max-w-lg lg:max-w-xl  p-4 relative  ">
+        <div className="md:text-2xl text-xl tracking-wider text-center  ">
           <div>
             {product.seriesName} - {product.productCode}
           </div>
         </div>
+
         <div>
           {/* Width Input */}
-          {product.cornerShape === "2duvar" && (
-            <div className="">
-              <label className="block text-sm font-medium mb-1">Genişlik</label>
-              <input
-                type="number"
-                value={leftWidth}
-                onChange={(e) => setLeftWidth(e.target.value)}
-                className="border p-1 mb-2 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
+          {product.cornerShape === "2duvar" &&
+            (product.productCode.includes("7060") ||
+              product.productCode.includes("7010")) && (
+              <div className="">
+                <label className="block text-sm font-medium ">Genişlik</label>
+                <input
+                  type="number"
+                  value={leftWidth}
+                  onChange={(e) => setLeftWidth(e.target.value)}
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                />
+                <label className="block text-sm font-medium ">
+                  Ara Panel Genişlik
+                </label>
+                <input
+                  type="number"
+                  value={leftWidth}
+                  onChange={(e) => setLeftWidth(e.target.value)}
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                />
+              </div>
+            )}
 
+          {product.cornerShape === "2duvar" &&
+            !(
+              product.productCode.includes("7060") ||
+              product.productCode.includes("7010")
+            ) && (
+              <div className="">
+                <label className="block text-sm font-medium ">Genişlik</label>
+                <input
+                  type="number"
+                  value={leftWidth}
+                  onChange={(e) => setLeftWidth(e.target.value)}
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                />
+              </div>
+            )}
           {/* Left and Right Width Inputs */}
           {product.cornerShape === "kose" &&
             product.productCode.includes("YP") && (
               <div className="">
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium ">
                   Ön Cephe Genişlik
+                </label>
+                <input
+                  type="number"
+                  value={leftWidth}
+                  onChange={(e) => setLeftWidth(e.target.value)}
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  "
+                />
+                <label className="block text-sm font-medium">
+                  Yan Panel Genişlik
+                </label>
+                <input
+                  type="number"
+                  value={rightWidth}
+                  onChange={(e) => setRightWidth(e.target.value)}
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                />
+              </div>
+            )}
+
+          {product.cornerShape === "kose" &&
+            !product.productCode.includes("YP") && (
+              <div className="">
+                <label className="block text-sm font-medium ">
+                  Sol Genişlik
                 </label>
                 <input
                   type="number"
@@ -253,37 +296,13 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                   className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
                 <label className="block text-sm font-medium mb-1">
-                  Yan Panel Genişlik
-                </label>
-                <input
-                  type="number"
-                  value={rightWidth}
-                  onChange={(e) => setRightWidth(e.target.value)}
-                  className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            )}
-
-          {product.cornerShape === "kose" &&
-            !product.productCode.includes("YP") && (
-              <div className="">
-                <label className="block text-sm font-medium mb-1">
-                  Sol Genişlik
-                </label>
-                <input
-                  type="number"
-                  value={leftWidth}
-                  onChange={(e) => setLeftWidth(e.target.value)}
-                  className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
-                />
-                <label className="block text-sm font-medium mb-1">
                   Sağ Genişlik
                 </label>
                 <input
                   type="number"
                   value={rightWidth}
                   onChange={(e) => setRightWidth(e.target.value)}
-                  className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
             )}
@@ -291,23 +310,19 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           {/* Width and Depth Inputs */}
           {product.cornerShape === "duzDuvar" && (
             <div className="">
-              <label className="block text-sm font-medium mb-1">
-                Sol Genişlik
-              </label>
+              <label className="block text-sm font-medium ">Genişlik</label>
               <input
                 type="number"
                 value={leftWidth}
                 onChange={(e) => setLeftWidth(e.target.value)}
-                className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
-              <label className="block text-sm font-medium mb-1">
-                Yan Panel
-              </label>
+              <label className="block text-sm font-medium ">Derinlik</label>
               <input
                 type="number"
                 value={depth}
                 onChange={(e) => setDepth(e.target.value)}
-                className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
             </div>
           )}
@@ -315,13 +330,13 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
         <div className="flex flex-col gap-2 ">
           {/* Kabin Rengi Seçenekleri Dropdown */}
           <div className="">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium ">
               Kabin Rengi Seçenekleri
             </label>
             <select
               value={cabinetColorOption}
               onChange={(e) => setCabinetColorOption(e.target.value)}
-              className="border p-2 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
             >
               <option value="">Seçiniz</option>
               {/* Replace this with actual cabinet color options */}
@@ -338,11 +353,11 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           </div>
 
           <div className="">
-            <label className="block text-sm font-medium mb-1">Yükseklik</label>
+            <label className="block text-sm font-medium ">Yükseklik</label>
             <select
               value={height}
               onChange={(e) => setHeight(e.target.value)}
-              className="border p-2 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
             >
               <option value="">Seçiniz</option>
               {product.heightOptions.map((heightOption) => {
@@ -365,13 +380,11 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           </div>
 
           <div className="">
-            <label className="block text-sm font-medium mb-1">
-              Cam Kalınlığı
-            </label>
+            <label className="block text-sm font-medium ">Cam Kalınlığı</label>
             <select
               value={glassThicknessOption}
               onChange={(e) => setGlassThicknessOption(e.target.value)}
-              className="border p-2 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
             >
               <option value="">Seçiniz</option>
 
@@ -391,13 +404,11 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
           {/* Glass Color Dropdown */}
           <div className="">
-            <label className="block text-sm font-medium mb-1">
-              Özel Renk Cam
-            </label>
+            <label className="block text-sm font-medium ">Özel Renk Cam</label>
             <select
               value={glassColorOption}
               onChange={(e) => setGlassColorOption(e.target.value)}
-              className="border p-2 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Seçiniz</option>
               {product.glassColorPrices &&
@@ -435,7 +446,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
               >
                 ?{/* Tooltip bubble */}
                 {showTooltip && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-2 text-sm bg-white text-black border border-gray-300 rounded shadow-lg w-72 h-auto">
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2  p-2 text-sm bg-white text-black border border-gray-300 rounded shadow-lg w-72 h-auto">
                     Camın kaydırma özelliğini artıran özel bir işlem sayesinde,
                     temizlik çok daha kolay hale gelir.
                   </div>
@@ -446,11 +457,11 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
           {/* Montage Dropdown */}
           <div className="">
-            <label className="block text-sm font-medium mb-1">Montaj</label>
+            <label className="block text-sm font-medium ">Montaj</label>
             <select
               value={montageOption}
               onChange={(e) => setMontageOption(e.target.value)}
-              className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
             >
               <option value="">Seçiniz</option>
               <option value="Merkez">
@@ -472,13 +483,13 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
           {/* Yıllık Bakım Programı Dropdown */}
           <div className="">
-            <label className="block text-sm font-medium mb-1">
+            <label className="block text-sm font-medium ">
               Yıllık Bakım Programı
             </label>
             <select
               value={maintenanceOption}
               onChange={(e) => setMaintenanceOption(e.target.value)}
-              className="border p-3 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
             >
               <option value="">Seçiniz</option>
               {sortedMaintenancePrices.map(([key, { year, price }]) => (
@@ -491,17 +502,24 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
         </div>
 
         {/* Display the calculated total price */}
-        <div className="flex justify-between mt-6 ">
+        <div className="flex justify-between ">
           <div className="text-lg font-semibold">Hesaplanan Liste Fiyatı: </div>
           <div className="text-xl font-bold">{calculateTotalPrice()}€</div>
         </div>
-
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-500 text-white p-3 rounded-md w-full mt-4 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Teklif Ver
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={closeModal}
+            className="bg-red-500 text-white p-3 rounded-md w-1/2 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            İptal Et
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white p-3 rounded-md w-1/2  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Teklif Ver
+          </button>
+        </div>
       </div>
       {/* Confirmation Modal */}
       {showConfirmationModal && (

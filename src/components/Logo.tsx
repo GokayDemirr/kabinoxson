@@ -27,8 +27,8 @@ const Logo: FC<LogoProps> = ({ className }) => {
   }, []);
 
   // Set dimensions based on screen size
-  const width = isLargeScreen ? 400 : 256;
-  const height = isLargeScreen ? 400 : 256;
+  const width = isLargeScreen ? 400 : 200;
+  const height = isLargeScreen ? 400 : 200;
 
   return (
     <div className={`flex items-center space-x-2 ${className}`}>

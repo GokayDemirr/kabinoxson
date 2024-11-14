@@ -7,6 +7,7 @@ import firestore from "@/firebase";
 import { FiArrowLeft } from "react-icons/fi";
 import PriceCalculator from "@/components/PriceCalculator";
 import IconComponent from "@/components/IconComponent";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // React icons kullanıyoruz
 
 interface DimensionPriceOption {
   dimension: { min: string; max: string };
@@ -160,8 +161,8 @@ const ProductDetail: React.FC = () => {
   }
 
   return (
-    <div className="pt-20 px-8">
-      <div className="fhdustu:mt-12 fhdustu:text-3xl">
+    <div className="pt-16 px-8">
+      <div className="fhdustu:mt-12 fhdustu:text-3xl ">
         <button
           onClick={() => router.back()}
           className="flex items-center text-md font-semibold text-black/70 mb-6"
@@ -169,78 +170,62 @@ const ProductDetail: React.FC = () => {
           <FiArrowLeft className="mr-2" /> Ürün Seçimine Geri Dön
         </button>
       </div>
-
-      <div className="flex sm:flex-row flex-col gap-8">
+      <div className="flex flex-col lg:flex-row lg:gap-16 gap-4">
         <div className="w-full lg:w-1/2 flex items-center justify-center relative">
-          <div className="relative w-92 sm:w-full 2xl:w-3/4 fhdustu:w-full">
-            <div className="absolute left-0 top-1/3 md:mt-12 transform -translate-y-1/2">
-              <IconComponent
+          <div className="relative w-full max-w-lg">
+            <div className="absolute left-0 top-1/3 transform -translate-y-1/2">
+              <FaArrowLeft
                 color="black"
-                className="bg-white rounded-3xl p-1 ml-2 lg:h-14 lg:w-14 h-8 w-8"
+                className="bg-white/70 rounded-3xl p-1 ml-2 lg:h-10 lg:w-10 fhdustu:h-14 fhdustu:w-14 h-8 w-8"
                 onClick={handlePreviousImage}
               />
             </div>
-            <div className="flex flex-col  ">
+            <div className="flex flex-col items-center">
               <Image
                 src={product.images[currentImageIndex]}
                 alt={product.seriesName}
                 width={600}
                 height={600}
-                className="mb-4 rounded-xl w-full object-cover"
+                className="rounded-xl object-cover w-full h-auto"
               />
-              <div className="gap-4 flex justify-center mt-4">
-                {product.images.slice(1).map(
-                  (
-                    image,
-                    index // product.images[0] hariç
-                  ) => (
-                    <div
-                      key={index}
-                      className={`sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 ${
-                        index === currentImageIndex
-                          ? "border-2 border-blue-500"
-                          : ""
-                      }`}
-                    >
-                      <Image
-                        src={image}
-                        alt={`Ürün Resmi ${index + 1}`}
-                        layout="responsive"
-                        width={100}
-                        height={100}
-                        className="rounded-md object-cover"
-                      />
-                    </div>
-                  )
-                )}
+              <div className="flex gap-4 justify-center mt-4">
+                {product.images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`w-16 h-16 md:w-32 md:h-32 cursor-pointer ${
+                      index === currentImageIndex ? "" : ""
+                    }`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  >
+                    <Image
+                      src={image}
+                      alt={`Product Image ${index + 1}`}
+                      layout="responsive"
+                      width={100}
+                      height={100}
+                      className="rounded-md object-cover"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="absolute right-0 top-1/3 md:mt-12 transform -translate-y-1/2">
-              <IconComponent
-                color="black"
-                width="48"
-                height="48"
-                rotate={true}
-                className="bg-white rounded-3xl p-1 mr-2 lg:h-14 lg:w-14 h-8 w-8"
+            <div className="absolute right-0 top-1/3 transform -translate-y-1/2">
+              <FaArrowRight
+                className="bg-white/70 rounded-3xl p-1 mr-2 lg:w-10 lg:h-10 fhdustu:h-14 fhdustu:w-14  h-8 w-8"
                 onClick={handleNextImage}
               />
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col w-full lg:w-1/2">
-          <div className="text-2xl md:text-3xl fhdustu:text-5xl font-semibold mb-2">
+        <div className="flex flex-col w-full lg:w-1/2 ">
+          <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold mb-2">
             {product.seriesName} - {product.productCode}
-          </div>
-
-          <div className="text-sm md:text-lg font-light tracking-wider fhdustu:text-3xl">
-            {seriesDescription ? (
-              <p>{seriesDescription}</p>
-            ) : (
-              <p>Seri Özelliği Yok</p>
-            )}
-          </div>
+          </h1>
+          <p className="font-light tracking-wider lg:text-xl">
+            {seriesDescription || "Seri Özelliği Yok"}
+          </p>
 
           {product.gif && product.gif.trim() !== "" && (
             <div className="w-32 mb-8 fhdustu:w-64">
@@ -251,12 +236,13 @@ const ProductDetail: React.FC = () => {
                 width={100}
                 height={100}
                 className="object-cover rounded-md "
+                unoptimized
               />
             </div>
           )}
 
           <div className="mb-4 overflow-x-auto">
-            <table className="min-w-full table-auto border-collapse text-sm md:text-base fhdustu:text-2xl">
+            <table className="min-w-full table-auto border-collapse text-sm  fhdustu:text-xl">
               <tbody>
                 <tr className="border-b hover:bg-gray-50">
                   <td className="p-1">Kapı Cam Kalınlığı</td>
@@ -289,22 +275,19 @@ const ProductDetail: React.FC = () => {
             </table>
           </div>
 
-          <div className="flex flex-col w-full lg:w-1/2 lg:items-start items-center ">
-            <div className="mt-auto">
-              <button
-                onClick={openModal}
-                className="bg-gray-500 p-2 rounded-md text-white hover:bg-gray-600 fhdustu:w-96 fhdustu:text-2xl "
-              >
-                Fiyat Hesapla
-              </button>
-            </div>
+          <div className="">
+            <button
+              onClick={openModal}
+              className="bg-gray-500 text-white p-2 rounded-md hover:bg-gray-600 w-full lg:w-64"
+            >
+              Fiyat Hesapla
+            </button>
           </div>
         </div>
       </div>
-
       {isModalOpen && (
         <PriceCalculator product={product} closeModal={closeModal} />
-      )}
+      )}{" "}
     </div>
   );
 };

@@ -6,27 +6,42 @@ export default function Navbar() {
     <nav className="hidden lg:block">
       <ul className="flex flex-wrap justify-center gap-12 text-custom-black fhdustu:text-2xl">
         <li className="mx-2">
-          <Link href="/kabinoxkatalog2025" className="hover:text-custom-teal">
+          <Link
+            href="/kabinoxkatalog2025"
+            className=" hover:bg-white hover:rounded-xl hover:p-2 "
+          >
             Katalog
           </Link>
         </li>
         <li className="mx-2">
-          <Link href="/kabinini-tasarla" className="hover:text-custom-teal">
+          <Link
+            href="/kabinimi-bul"
+            className=" hover:bg-white hover:rounded-xl hover:p-2 "
+          >
             Kabinimi Bul
           </Link>
         </li>
         <li className="mx-2">
-          <Link href="/tasarimlarimiz" className="hover:text-custom-teal">
-            Tasarımlarımız
+          <Link
+            href="/urunler"
+            className=" hover:bg-white hover:rounded-xl hover:p-2 "
+          >
+            Ürünler
           </Link>
         </li>
         <li className="mx-2">
-          <Link href="/hakkimizda" className="hover:text-custom-teal">
+          <Link
+            href="/hakkimizda"
+            className=" hover:bg-white hover:rounded-xl hover:p-2 "
+          >
             Hakkımızda
           </Link>
         </li>
         <li className="mx-2">
-          <Link href="/bize-ulasin" className="hover:text-custom-teal">
+          <Link
+            href="/bize-ulasin"
+            className=" hover:bg-white hover:rounded-xl hover:p-2 "
+          >
             Bize Ulaşın
           </Link>
         </li>

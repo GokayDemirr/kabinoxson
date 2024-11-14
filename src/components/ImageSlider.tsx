@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import HeroImageNavigationButton from "@/components/HeroImageNavigationButton";
+import Image from "next/image";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // React icons kullanıyoruz
 
 interface ImageSliderProps {
   images: string[];
@@ -34,7 +35,23 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
   }, [handleNextImage]);
 
   return (
-    <div className="relative w-full h-full sm:h-[50vh] md:h-[60vh] mt-24 ">
+    <div className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden mt-32">
+      {/* Ok İşaretleri */}
+      <button
+        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full focus:outline-none z-10"
+        onClick={handlePrevImage}
+        aria-label="Previous Slide"
+      >
+        <FaArrowLeft size={24} />
+      </button>
+      <button
+        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full focus:outline-none z-10"
+        onClick={handleNextImage}
+        aria-label="Next Slide"
+      >
+        <FaArrowRight size={24} />
+      </button>
+
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -42,16 +59,14 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images }) => {
       >
         {images.map((image, index) => (
           <div key={index} className="w-full flex-shrink-0 relative">
-            <img
+            <Image
               src={image}
               alt={`Slide ${index}`}
-              className="w-full h-full object-cover"
+              layout="responsive"
+              width={1920}
+              height={1080}
+              priority
             />
-            {currentIndex === index && (
-              <div className="absolute bottom-10 left-10 text-white">
-                {/* Additional content (if any) */}
-              </div>
-            )}
           </div>
         ))}
       </div>

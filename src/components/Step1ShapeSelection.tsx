@@ -36,9 +36,9 @@ const Step1ShapeSelection: React.FC<Step1Props> = ({
             <Image
               src={shape.image}
               alt={shape.label}
-              width={128}
-              height={128}
-              className="mx-auto mb-2 md:w-40 md:h-40"
+              width={256} // Büyük ekranlarda
+              height={256} // Büyük ekranlarda
+              className="mx-auto mb-2 w-32 h-32 sm:w-48 sm:h-48 md:w-128 md:h-128   " // Tailwind sınıfları
             />
             <span className="text-sm md:text-base">{shape.label}</span>
           </div>
