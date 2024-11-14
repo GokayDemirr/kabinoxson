@@ -55,6 +55,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const [width, setWidth] = useState<number | string>("");
   const [leftWidth, setLeftWidth] = useState<number | string>("");
   const [rightWidth, setRightWidth] = useState<number | string>("");
+  const [width1, setWidth1] = useState<number | string>("");
+  const [width2, setWidth2] = useState<number | string>("");
   const [depth, setDepth] = useState<number | string>("");
   const [height, setHeight] = useState<number | string>("");
   const [isCleaningChecked, setIsCleaningChecked] = useState(false);
@@ -66,15 +68,48 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const [cabinetColorOption, setCabinetColorOption] = useState<string>("");
   const [glassThicknessOption, setGlassThicknessOption] = useState<string>("");
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showInputRequiredModal, setShowInputRequiredModal] = useState(false);
 
   const handleSubmit = () => {
-    setShowConfirmationModal(true); // Show confirmation modal when button is clicked
+    // Check if all required fields are filled
+    if (
+      // For all products except those with '2030' in productCode, 'leftWidth' is required
+      (product.productCode.includes("2030") ? false : !leftWidth) || // If '2030' in productCode, don't require 'leftWidth'
+      (product.cornerShape === "kose" &&
+        product.productCode.includes("2030") &&
+        (!width1 || !width2)) || // width1 and width2 required for 'kose' shape with '2030'
+      (product.cornerShape === "kose" &&
+        !product.productCode.includes("2030") &&
+        !rightWidth) || // Right width required for 'kose' shape (except for '2030')
+      (product.cornerShape === "duzDuvar" && !depth) || // Depth required for 'duzDuvar' shape
+      !cabinetColorOption ||
+      !height ||
+      !glassThicknessOption ||
+      !glassColorOption ||
+      !montageOption ||
+      !maintenanceOption
+    ) {
+      // Alert the user if a required field is not filled
+      setShowInputRequiredModal(true);
+      return; // Prevent form submission
+    }
+
+    // If all required fields are filled, proceed with submission
+    // Implement your form submission logic here
+    console.log("Form submitted successfully!");
+    setShowConfirmationModal(true); // Show the confirmation modal
   };
 
   const closeConfirmationModal = () => {
     setShowConfirmationModal(false); // Close the confirmation modal
     closeModal(); // Close the price calculator modal
   };
+
+  const closeInputRequiredModal = () => {
+    setShowInputRequiredModal(false);
+  };
+
+  const openInputRequiredModal = () => {};
 
   const sortedMaintenancePrices = product.maintenancePrices
     ? Object.entries(product.maintenancePrices).sort(
@@ -132,13 +167,62 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
   const calculateTotalPrice = () => {
     let totalPrice = 0;
+    let percentageSum = 0;
 
-    // Add the Easy Clean price if selected
+    // Step 1: Add dimension prices
+    if (leftWidth)
+      totalPrice += calculateDimensionPrice("leftWidth", leftWidth);
+    if (rightWidth)
+      totalPrice += calculateDimensionPrice("rightWidth", rightWidth);
+    if (depth) totalPrice += calculateDimensionPrice("depth", depth);
+    if (width1) totalPrice += calculateDimensionPrice("width1", width1);
+    if (width2) totalPrice += calculateDimensionPrice("width2", width2);
+
+    // Step 2: Add height price
+    if (height && product.heightPrices) {
+      const heightPriceEntry = Object.values(product.heightPrices).find(
+        (entry) => entry.height === height.toString()
+      );
+
+      // Check if the selected height is not 200, then add the height price
+      if (heightPriceEntry && height !== "200") {
+        totalPrice += parseFloat(heightPriceEntry.price);
+      }
+    }
+
+    // Step 3: Apply glass thickness percentage if selected
+    if (glassThicknessOption) {
+      const selectedThickness = product.glassThicknessPricing.find(
+        (option) => option.glassThicknessExtra === glassThicknessOption
+      );
+
+      if (selectedThickness) {
+        percentageSum += percentageSum + parseFloat(selectedThickness.price);
+      }
+    }
+
+    // Step 4: Add the selected Glass Color price
+    if (product.glassColorPrices && glassColorOption) {
+      const selectedColor =
+        product.glassColorPrices[
+          glassColorOption as keyof typeof product.glassColorPrices
+        ];
+      if (selectedColor) {
+        percentageSum += parseFloat(selectedColor.price);
+        console.log(percentageSum);
+      }
+    }
+
+    if (glassThicknessOption && glassColorOption) {
+      totalPrice = totalPrice + (totalPrice * percentageSum) / 100;
+    }
+
+    // Step 5: Add the Easy Clean price if selected
     if (isCleaningChecked) {
       totalPrice += parseFloat(product.easyCleanPrice);
     }
 
-    // Add the selected Montage price
+    // Step 6: Add the selected Montage price
     if (montageOption === "Merkez") {
       totalPrice += parseFloat(product.centerMontagePrice);
     } else if (product.montagePrices && montageOption) {
@@ -151,7 +235,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
       }
     }
 
-    // Add the selected Maintenance price
+    // Step 7: Add the selected Maintenance price
     if (product.maintenancePrices) {
       const selectedMaintenance =
         product.maintenancePrices[
@@ -162,51 +246,9 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
       }
     }
 
-    // Add the selected Glass Color price
-    if (product.glassColorPrices && glassColorOption) {
-      const selectedColor =
-        product.glassColorPrices[
-          glassColorOption as keyof typeof product.glassColorPrices
-        ];
-      if (selectedColor) {
-        totalPrice =
-          (totalPrice * parseFloat(selectedColor.price)) / 100 + totalPrice;
-      }
-    }
-
-    // Add dimension prices
-    if (leftWidth)
-      totalPrice += calculateDimensionPrice("leftWidth", leftWidth);
-    if (rightWidth)
-      totalPrice += calculateDimensionPrice("rightWidth", rightWidth);
-    if (depth) totalPrice += calculateDimensionPrice("depth", depth);
-
-    // Add height price
-    if (height && product.heightPrices) {
-      const heightPriceEntry = Object.values(product.heightPrices).find(
-        (entry) => entry.height === height.toString()
-      );
-
-      // Check if the selected height is not 200, then add the height price
-      if (heightPriceEntry && height !== "200") {
-        totalPrice = totalPrice += parseFloat(heightPriceEntry.price);
-      }
-    }
-
-    // Add glass thickness price if selected
-    if (glassThicknessOption) {
-      const selectedThickness = product.glassThicknessPricing.find(
-        (option) => option.glassThicknessExtra === glassThicknessOption
-      );
-
-      if (selectedThickness) {
-        totalPrice += parseFloat(selectedThickness.price);
-        console.log("Added Glass Thickness price:", selectedThickness.price);
-      }
-    }
-
     return totalPrice;
   };
+
   console.log("glassThicknessPricing:", product.glassThicknessPricing); // Add this line to log the array
 
   return (
@@ -224,7 +266,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
             (product.productCode.includes("7060") ||
               product.productCode.includes("7010")) && (
               <div className="">
-                <label className="block text-sm font-medium ">Genişlik</label>
+                <label className="block text-sm font-medium ">Genişlik*</label>
                 <input
                   type="number"
                   value={leftWidth}
@@ -232,12 +274,12 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                   className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
                 <label className="block text-sm font-medium ">
-                  Ara Panel Genişlik
+                  Ara Panel Genişlik*
                 </label>
                 <input
                   type="number"
-                  value={leftWidth}
-                  onChange={(e) => setLeftWidth(e.target.value)}
+                  value={depth}
+                  onChange={(e) => setDepth(e.target.value)}
                   className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
@@ -249,7 +291,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
               product.productCode.includes("7010")
             ) && (
               <div className="">
-                <label className="block text-sm font-medium ">Genişlik</label>
+                <label className="block text-sm font-medium ">Genişlik*</label>
                 <input
                   type="number"
                   value={leftWidth}
@@ -263,7 +305,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
             product.productCode.includes("YP") && (
               <div className="">
                 <label className="block text-sm font-medium ">
-                  Ön Cephe Genişlik
+                  Ön Cephe Genişlik*
                 </label>
                 <input
                   type="number"
@@ -272,7 +314,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                   className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  "
                 />
                 <label className="block text-sm font-medium">
-                  Yan Panel Genişlik
+                  Yan Panel Genişlik*
                 </label>
                 <input
                   type="number"
@@ -284,10 +326,35 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
             )}
 
           {product.cornerShape === "kose" &&
-            !product.productCode.includes("YP") && (
+            product.productCode.includes("2030") && (
               <div className="">
                 <label className="block text-sm font-medium ">
-                  Sol Genişlik
+                  Sol Genişlik*
+                </label>
+                <input
+                  type="number"
+                  value={width2}
+                  onChange={(e) => setWidth2(e.target.value)}
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  "
+                />
+                <label className="block text-sm font-medium">
+                  Sağ Genişlik*
+                </label>
+                <input
+                  type="number"
+                  value={width1}
+                  onChange={(e) => setWidth1(e.target.value)}
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                />
+              </div>
+            )}
+
+          {product.cornerShape === "kose" &&
+            !product.productCode.includes("YP") &&
+            !product.productCode.includes("2030") && (
+              <div className="">
+                <label className="block text-sm font-medium ">
+                  Sol Genişlik*
                 </label>
                 <input
                   type="number"
@@ -296,7 +363,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                   className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
                 <label className="block text-sm font-medium mb-1">
-                  Sağ Genişlik
+                  Sağ Genişlik*
                 </label>
                 <input
                   type="number"
@@ -310,14 +377,14 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           {/* Width and Depth Inputs */}
           {product.cornerShape === "duzDuvar" && (
             <div className="">
-              <label className="block text-sm font-medium ">Genişlik</label>
+              <label className="block text-sm font-medium ">Genişlik*</label>
               <input
                 type="number"
                 value={leftWidth}
                 onChange={(e) => setLeftWidth(e.target.value)}
                 className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
-              <label className="block text-sm font-medium ">Derinlik</label>
+              <label className="block text-sm font-medium ">Derinlik*</label>
               <input
                 type="number"
                 value={depth}
@@ -331,7 +398,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           {/* Kabin Rengi Seçenekleri Dropdown */}
           <div className="">
             <label className="block text-sm font-medium ">
-              Kabin Rengi Seçenekleri
+              Kabin Rengi Seçenekleri*
             </label>
             <select
               value={cabinetColorOption}
@@ -353,7 +420,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           </div>
 
           <div className="">
-            <label className="block text-sm font-medium ">Yükseklik</label>
+            <label className="block text-sm font-medium ">Yükseklik*</label>
             <select
               value={height}
               onChange={(e) => setHeight(e.target.value)}
@@ -380,7 +447,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           </div>
 
           <div className="">
-            <label className="block text-sm font-medium ">Cam Kalınlığı</label>
+            <label className="block text-sm font-medium ">Cam Kalınlığı*</label>
             <select
               value={glassThicknessOption}
               onChange={(e) => setGlassThicknessOption(e.target.value)}
@@ -395,8 +462,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                     key={thicknessOption.glassThicknessExtra}
                     value={thicknessOption.glassThicknessExtra}
                   >
-                    {thicknessOption.glassThicknessExtra} mm (+
-                    {thicknessOption.price}€)
+                    {thicknessOption.glassThicknessExtra} mm (+%
+                    {thicknessOption.price})
                   </option>
                 ))}
             </select>
@@ -404,7 +471,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
           {/* Glass Color Dropdown */}
           <div className="">
-            <label className="block text-sm font-medium ">Özel Renk Cam</label>
+            <label className="block text-sm font-medium ">Cam Rengi*</label>
             <select
               value={glassColorOption}
               onChange={(e) => setGlassColorOption(e.target.value)}
@@ -457,7 +524,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
           {/* Montage Dropdown */}
           <div className="">
-            <label className="block text-sm font-medium ">Montaj</label>
+            <label className="block text-sm font-medium ">Montaj*</label>
             <select
               value={montageOption}
               onChange={(e) => setMontageOption(e.target.value)}
@@ -483,15 +550,16 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
           {/* Yıllık Bakım Programı Dropdown */}
           <div className="">
-            <label className="block text-sm font-medium ">
-              Yıllık Bakım Programı
+            <label className="block text-sm font-medium  ">
+              Yıllık Bakım Programı*
             </label>
             <select
               value={maintenanceOption}
               onChange={(e) => setMaintenanceOption(e.target.value)}
-              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+              className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2 "
             >
               <option value="">Seçiniz</option>
+              <option value="Yok">Yok</option>
               {sortedMaintenancePrices.map(([key, { year, price }]) => (
                 <option key={key} value={year}>
                   {year} Yıl (+{price}€)
@@ -502,20 +570,26 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
         </div>
 
         {/* Display the calculated total price */}
-        <div className="flex justify-between ">
-          <div className="text-lg font-semibold">Hesaplanan Liste Fiyatı: </div>
-          <div className="text-xl font-bold">{calculateTotalPrice()}€</div>
-        </div>
+        {cabinetColorOption && (
+          <div className="flex justify-between ">
+            <div className="text-lg font-semibold">
+              Hesaplanan Liste Fiyatı:{" "}
+            </div>
+            <div className="text-xl font-bold">{calculateTotalPrice()}€</div>
+          </div>
+        )}
+
         <div className="flex gap-4">
           <button
             onClick={closeModal}
-            className="bg-red-500 text-white p-3 rounded-md w-1/2 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-red-500 text-white p-2 rounded-md w-1/2 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             İptal Et
           </button>
+
           <button
             onClick={handleSubmit}
-            className="bg-blue-500 text-white p-3 rounded-md w-1/2  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-blue-500 text-white p-2 rounded-md w-1/2  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Teklif Ver
           </button>
@@ -524,12 +598,23 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
       {/* Confirmation Modal */}
       {showConfirmationModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75">
-          <div className="bg-white w-1/4 p-4 rounded-md text-center">
-            <h2 className="text-xl font-bold">
-              Teklifiniz başarıyla verilmiştir.
-            </h2>
+          <div className="bg-white w-full md:w-1/2 xl:w-1/4 p-4 rounded-md text-center">
+            <div className=" ">Teklifiniz başarıyla verilmiştir.</div>
             <button
               onClick={closeConfirmationModal}
+              className="bg-blue-500 text-white p-2 rounded-md mt-4 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Tamam
+            </button>
+          </div>
+        </div>
+      )}
+      {showInputRequiredModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-75">
+          <div className="bg-white w-full md:w-1/2 xl:w-1/4 p-4 rounded-md text-center">
+            <div className=" ">Lütfen * ile işaretli alanları doldurunuz.</div>
+            <button
+              onClick={closeInputRequiredModal}
               className="bg-blue-500 text-white p-2 rounded-md mt-4 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               Tamam
