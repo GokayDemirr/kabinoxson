@@ -109,9 +109,10 @@ const ContactForm: React.FC = () => {
         </div>
         <button
           type="submit"
-          className="w-full py-3 bg-black/70 text-white font-bold rounded hover:bg-black/20 transition duration-300"
+          className="w-full py-2 bg-black/20 text-white font-bold rounded text-sm transition duration-300"
+          disabled
         >
-          Gönder
+          Gönder(Devre dışı)
         </button>
       </form>
     </div>

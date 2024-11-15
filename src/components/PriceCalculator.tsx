@@ -1,19 +1,25 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import DimensionValidator from "./DimensionValidator";
 
+// Define a type for dimension options
 interface DimensionPriceOption {
-  dimension: { min: string; max: string };
-  color1Price: string;
-  color2Price: string;
-  color3Price: string;
+  dimension: { min: string; max: string }; // Adjusted to use numbers for easier comparisons
+  color1Price: string; // Changed to string for consistency
+  color2Price: string; // Changed to string for consistency
+  color3Price: string; // Changed to string for consistency
 }
 
+// Main interface for the product object
 interface PriceCalculatorProps {
   product: {
     cornerShape: string;
     seriesName: string;
+    leftWidth: number;
+    rightWidth?: number;
+    depth: number;
     productCode: string;
     heightOptions: number[];
-    centerMontagePrice: string; // Burayı string yerine number yapıyoruz
+    centerMontagePrice: string; // Changed to number
     easyCleanPrice: string;
     montagePrices: {
       montage1: { name: string; price: number };
@@ -38,12 +44,22 @@ interface PriceCalculatorProps {
     dimensionPrices: {
       option1: DimensionPriceOption;
       option2: DimensionPriceOption;
-      // Other options can go here
+
+      // Additional options can be added as needed
     };
     glassThicknessPricing: {
       glassThicknessExtra: string;
       price: string;
     }[];
+    dimensions?: {
+      // Add dimensions to your Product interface
+      width1Min: number;
+      width1Max: number;
+      width2Min: number;
+      width2Max: number;
+      depth1Min: number;
+      depth1Max: number;
+    };
   };
   closeModal: () => void;
 }
@@ -55,6 +71,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const [width, setWidth] = useState<number | string>("");
   const [leftWidth, setLeftWidth] = useState<number | string>("");
   const [rightWidth, setRightWidth] = useState<number | string>("");
+  const [isValidDimensions, setIsValidDimensions] = useState(true); // Yeni state
+
   const [width1, setWidth1] = useState<number | string>("");
   const [width2, setWidth2] = useState<number | string>("");
   const [depth, setDepth] = useState<number | string>("");
@@ -69,6 +87,70 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const [glassThicknessOption, setGlassThicknessOption] = useState<string>("");
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showInputRequiredModal, setShowInputRequiredModal] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+
+  const parseDimension = (value: number | string) => {
+    const parsedValue = typeof value === "string" ? parseFloat(value) : value;
+    return isNaN(parsedValue) ? 0 : parsedValue;
+  };
+
+  const validateDimensions = useCallback(() => {
+    const width1Parsed = parseDimension(width1);
+    const width2Parsed = parseDimension(width2);
+
+    const leftWidthParsed = parseDimension(leftWidth);
+    const rightWidthParsed = rightWidth
+      ? parseDimension(rightWidth)
+      : undefined;
+    const depthParsed = parseDimension(depth);
+
+    // 2030 modeline özel doğrulama
+    const is2030Model = product.productCode.includes("2030");
+
+    if (is2030Model) {
+      // 2030 modeli için leftWidth ve rightWidth arasındaki ilişkiyi kontrol et
+      if (
+        width1Parsed < (product.dimensions?.width1Min || 0) ||
+        width1Parsed > (product.dimensions?.width1Max || 0) ||
+        width2Parsed! < (product.dimensions?.width2Min || 0) ||
+        width2Parsed! > (product.dimensions?.width2Max || 0)
+      ) {
+        setIsValidDimensions(false);
+      } else {
+        setIsValidDimensions(true);
+      }
+    } else {
+      // 2030 olmayan modeller için genel doğrulama
+      if (
+        (product.cornerShape === "2duvarAraPanel" &&
+          (leftWidthParsed < (product.dimensions?.width1Min || 0) ||
+            leftWidthParsed > (product.dimensions?.width1Max || 0) ||
+            depthParsed < (product.dimensions?.depth1Min || 0) ||
+            depthParsed > (product.dimensions?.depth1Max || 0))) ||
+        (product.cornerShape === "2duvar" &&
+          (leftWidthParsed < (product.dimensions?.width1Min || 0) ||
+            leftWidthParsed > (product.dimensions?.width1Max || 0))) ||
+        (product.cornerShape === "kose" &&
+          (leftWidthParsed < (product.dimensions?.width1Min || 0) ||
+            leftWidthParsed > (product.dimensions?.width1Max || 0) ||
+            rightWidthParsed! < (product.dimensions?.width2Min || 0) ||
+            rightWidthParsed! > (product.dimensions?.width2Max || 0))) ||
+        (product.cornerShape === "duzDuvar" &&
+          (leftWidthParsed < (product.dimensions?.width1Min || 0) ||
+            leftWidthParsed > (product.dimensions?.width1Max || 0) ||
+            depthParsed < (product.dimensions?.depth1Min || 0) ||
+            depthParsed > (product.dimensions?.depth1Max || 0)))
+      ) {
+        setIsValidDimensions(false);
+      } else {
+        setIsValidDimensions(true);
+      }
+    }
+  }, [leftWidth, rightWidth, depth, product, width1, width2]);
+
+  useEffect(() => {
+    validateDimensions(); // validateDimensions'ı useEffect içinde çağırıyoruz
+  }, [leftWidth, rightWidth, depth, product, validateDimensions]);
 
   const handleSubmit = () => {
     // Check if all required fields are filled
@@ -96,8 +178,11 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
     // If all required fields are filled, proceed with submission
     // Implement your form submission logic here
-    console.log("Form submitted successfully!");
     setShowConfirmationModal(true); // Show the confirmation modal
+  };
+
+  const handleSelectedPrice = (price: string | null) => {
+    setSelectedPrice(price);
   };
 
   const closeConfirmationModal = () => {
@@ -121,11 +206,6 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
     dimensionType: string,
     dimensionValue: number | string
   ) => {
-    console.log(
-      `Checking dimension pricing for ${dimensionType} with value:`,
-      dimensionValue
-    );
-
     const dimensionPrice =
       product.dimensionPrices[
         dimensionType as keyof typeof product.dimensionPrices
@@ -154,13 +234,10 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
             : 3
         }Price`;
 
-        console.log(`Adding ${priceKey} price:`, matchingOption[priceKey]);
         return parseFloat(matchingOption[priceKey]);
       } else {
-        console.log("No matching option found for this dimension value.");
       }
     } else {
-      console.log(`No dimension prices found for ${dimensionType}.`);
     }
     return 0;
   };
@@ -168,6 +245,7 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
   const calculateTotalPrice = () => {
     let totalPrice = 0;
     let percentageSum = 0;
+    let dimensionPrice = 0;
 
     // Step 1: Add dimension prices
     if (leftWidth)
@@ -175,8 +253,10 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
     if (rightWidth)
       totalPrice += calculateDimensionPrice("rightWidth", rightWidth);
     if (depth) totalPrice += calculateDimensionPrice("depth", depth);
-    if (width1) totalPrice += calculateDimensionPrice("width1", width1);
-    if (width2) totalPrice += calculateDimensionPrice("width2", width2);
+
+    if (selectedPrice) {
+      totalPrice += parseFloat(selectedPrice);
+    }
 
     // Step 2: Add height price
     if (height && product.heightPrices) {
@@ -209,7 +289,6 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
         ];
       if (selectedColor) {
         percentageSum += parseFloat(selectedColor.price);
-        console.log(percentageSum);
       }
     }
 
@@ -249,8 +328,6 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
     return totalPrice;
   };
 
-  console.log("glassThicknessPricing:", product.glassThicknessPricing); // Add this line to log the array
-
   return (
     <div className="fixed inset-0 flex justify-center items-center  bg-gray-500 bg-opacity-75">
       <div className="bg-white w-full max-w-md md:max-w-lg lg:max-w-xl  p-4 relative  ">
@@ -262,50 +339,57 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
         <div>
           {/* Width Input */}
-          {product.cornerShape === "2duvar" &&
-            (product.productCode.includes("7060") ||
-              product.productCode.includes("7010")) && (
-              <div className="">
-                <label className="block text-sm font-medium ">Genişlik*</label>
-                <input
-                  type="number"
-                  value={leftWidth}
-                  onChange={(e) => setLeftWidth(e.target.value)}
-                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
-                />
-                <label className="block text-sm font-medium ">
-                  Ara Panel Genişlik*
-                </label>
+          {product.cornerShape === "2duvarAraPanel" && (
+            <div className="">
+              <label className="block text-sm font-medium">
+                Genişlik* ({product.dimensions?.width1Min} -{" "}
+                {product.dimensions?.width1Max} cm)
+              </label>
+              <input
+                type="number"
+                value={leftWidth}
+                onChange={(e) => setLeftWidth(e.target.value)}
+                className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              <label className="block text-sm font-medium">
+                Ara Panel Genişlik* ({product.dimensions?.depth1Min} -{" "}
+                {product.dimensions?.depth1Max} cm)
+              </label>
+              <div className="flex gap-2 items-center">
                 <input
                   type="number"
                   value={depth}
                   onChange={(e) => setDepth(e.target.value)}
-                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-              </div>
-            )}
 
-          {product.cornerShape === "2duvar" &&
-            !(
-              product.productCode.includes("7060") ||
-              product.productCode.includes("7010")
-            ) && (
-              <div className="">
-                <label className="block text-sm font-medium ">Genişlik*</label>
-                <input
-                  type="number"
-                  value={leftWidth}
-                  onChange={(e) => setLeftWidth(e.target.value)}
-                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
-                />
+                {/* Text between inputs */}
               </div>
-            )}
+            </div>
+          )}
+
+          {product.cornerShape === "2duvar" && (
+            <div className="">
+              <label className="block text-sm font-medium ">
+                Genişlik* ({product.dimensions?.width1Min} -{" "}
+                {product.dimensions?.width1Max} cm)
+              </label>
+              <input
+                type="number"
+                value={leftWidth}
+                onChange={(e) => setLeftWidth(e.target.value)}
+                className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
+              />
+            </div>
+          )}
           {/* Left and Right Width Inputs */}
           {product.cornerShape === "kose" &&
             product.productCode.includes("YP") && (
               <div className="">
                 <label className="block text-sm font-medium ">
-                  Ön Cephe Genişlik*
+                  Ön Cephe Genişlik* ({product.dimensions?.width1Min} -{" "}
+                  {product.dimensions?.width1Max} cm)
                 </label>
                 <input
                   type="number"
@@ -314,7 +398,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                   className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  "
                 />
                 <label className="block text-sm font-medium">
-                  Yan Panel Genişlik*
+                  Yan Panel Genişlik* ({product.dimensions?.width2Min} -{" "}
+                  {product.dimensions?.width2Max} cm)
                 </label>
                 <input
                   type="number"
@@ -327,26 +412,40 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
 
           {product.cornerShape === "kose" &&
             product.productCode.includes("2030") && (
-              <div className="">
-                <label className="block text-sm font-medium ">
-                  Sol Genişlik*
-                </label>
-                <input
-                  type="number"
-                  value={width2}
-                  onChange={(e) => setWidth2(e.target.value)}
-                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  "
+              <>
+                {/* Your existing inputs */}
+                <div className="">
+                  <label className="block text-sm font-medium">
+                    Sol Genişlik* ({product.dimensions?.width1Min} -{" "}
+                    {product.dimensions?.width1Max} cm)
+                  </label>
+                  <input
+                    type="number"
+                    value={width2}
+                    onChange={(e) => setWidth2(e.target.value)}
+                    className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <label className="block text-sm font-medium">
+                    Sağ Genişlik* ({product.dimensions?.width2Min} -{" "}
+                    {product.dimensions?.width2Max} cm)
+                  </label>
+                  <input
+                    type="number"
+                    value={width1}
+                    onChange={(e) => setWidth1(e.target.value)}
+                    className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* DimensionValidator component */}
+                <DimensionValidator
+                  width1={Number(width1)}
+                  width2={Number(width2)}
+                  dimensionPrices={product.dimensionPrices}
+                  selectedColor={cabinetColorOption} // Renk bilgisi buraya gönderiliyor
+                  onPriceSelected={handleSelectedPrice} // selectedPrice'ı burada güncelliyoruz
                 />
-                <label className="block text-sm font-medium">
-                  Sağ Genişlik*
-                </label>
-                <input
-                  type="number"
-                  value={width1}
-                  onChange={(e) => setWidth1(e.target.value)}
-                  className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
-                />
-              </div>
+              </>
             )}
 
           {product.cornerShape === "kose" &&
@@ -354,7 +453,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
             !product.productCode.includes("2030") && (
               <div className="">
                 <label className="block text-sm font-medium ">
-                  Sol Genişlik*
+                  Sol Genişlik* ({product.dimensions?.width1Min} -{" "}
+                  {product.dimensions?.width1Max} cm)
                 </label>
                 <input
                   type="number"
@@ -363,7 +463,8 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
                   className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
                 <label className="block text-sm font-medium mb-1">
-                  Sağ Genişlik*
+                  Sağ Genişlik* ({product.dimensions?.width2Min} -{" "}
+                  {product.dimensions?.width2Max} cm)
                 </label>
                 <input
                   type="number"
@@ -377,14 +478,20 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
           {/* Width and Depth Inputs */}
           {product.cornerShape === "duzDuvar" && (
             <div className="">
-              <label className="block text-sm font-medium ">Genişlik*</label>
+              <label className="block text-sm font-medium ">
+                Genişlik* ({product.dimensions?.width1Min} -{" "}
+                {product.dimensions?.width1Max} cm)
+              </label>
               <input
                 type="number"
                 value={leftWidth}
                 onChange={(e) => setLeftWidth(e.target.value)}
                 className="border p-1 rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
-              <label className="block text-sm font-medium ">Derinlik*</label>
+              <label className="block text-sm font-medium ">
+                Derinlik* ({product.dimensions?.depth1Min} -{" "}
+                {product.dimensions?.depth1Max} cm)
+              </label>
               <input
                 type="number"
                 value={depth}
@@ -573,25 +680,22 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
         {cabinetColorOption && (
           <div className="flex justify-between ">
             <div className="text-lg font-semibold">
-              Hesaplanan Liste Fiyatı:{" "}
+              {isValidDimensions
+                ? "Hesaplanan Liste Fiyatı:"
+                : "Lütfen ölçüleri uygun aralıklarda giriniz"}
             </div>
-            <div className="text-xl font-bold">{calculateTotalPrice()}€</div>
+            <div className="text-xl font-bold">
+              {isValidDimensions ? `${calculateTotalPrice()}€` : ""}
+            </div>
           </div>
         )}
 
         <div className="flex gap-4">
           <button
             onClick={closeModal}
-            className="bg-red-500 text-white p-2 rounded-md w-1/2 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-red-500 text-white p-2 rounded-md w-full hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            İptal Et
-          </button>
-
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white p-2 rounded-md w-1/2  hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Teklif Ver
+            Kapat
           </button>
         </div>
       </div>

@@ -19,6 +19,9 @@ interface DimensionPriceOption {
 interface Product {
   id: string;
   seriesName: string;
+  leftWidth: number;
+  rightWidth?: number;
+  depth: number;
   productCode: string;
   coverImage: string;
   doorGlassThicknessOptions: string[];
@@ -37,6 +40,15 @@ interface Product {
     option1: DimensionPriceOption;
     option2: DimensionPriceOption;
     // Add more options as needed
+  };
+  dimensions?: {
+    // Add dimensions to your Product interface
+    width1Min: number;
+    width1Max: number;
+    width2Min: number;
+    width2Max: number;
+    depth1Min: number;
+    depth1Max: number;
   };
   glassThicknessPricing: any;
 }
@@ -96,6 +108,10 @@ const ProductDetail: React.FC = () => {
             dimensionPrices: data.dimensionPrices || null,
             gif: data.gif,
             glassThicknessPricing: data.glassThicknessPricing || null,
+            dimensions: data.dimensions || null, // Add dimensions if available
+            leftWidth: data.leftWidth,
+            rightWidth: data.rightWidth,
+            depth: data.depth,
           });
 
           const seriesRef = collection(firestore, "Series");
@@ -111,9 +127,7 @@ const ProductDetail: React.FC = () => {
             setSeriesDescription(seriesData.seriesDescription);
           }
         }
-      } catch (error) {
-        console.error("Error fetching product and series:", error);
-      }
+      } catch (error) {}
       setLoading(false);
     };
 
