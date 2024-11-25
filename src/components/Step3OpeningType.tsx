@@ -27,9 +27,7 @@ const Step3OpeningType: React.FC<Step3Props> = ({
         <div
           key={type.label}
           className={`p-2 sm:p-4 rounded-lg cursor-pointer transition flex flex-col items-center ${
-            selectedOpeningType === type.value
-              ? "bg-custom-color3"
-              : "bg-inherit"
+            selectedOpeningType === type.value ? "bg-gray-500/30" : "bg-inherit"
           }`}
           onClick={() => setOpeningType(type.value)}
         >
@@ -38,7 +36,7 @@ const Step3OpeningType: React.FC<Step3Props> = ({
             alt={type.label}
             width={128} // Reduced size for smaller screens
             height={128} // Reduced size for smaller screens
-            className=" mb-2 w-32 h-32 sm:w-48 sm:h-48 md:w-128 md:h-128   "
+            className="object-cover object-center mb-2 w-32 h-32 sm:w-48 sm:h-48 md:w-128 md:h-128"
             unoptimized
           />
           <span className="text-xs sm:text-sm md:text-base">{type.label}</span>

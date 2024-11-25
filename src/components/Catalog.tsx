@@ -8,7 +8,7 @@ const Catalog: React.FC = () => {
           allowFullScreen
           scrolling="no"
           className="w-full h-full border-0"
-          src="https://heyzine.com/flip-book/5419854e91.html"
+          src="https://heyzine.com/flip-book/e6a9cfe812.html"
         />
       </div>
     </div>

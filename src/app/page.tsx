@@ -31,7 +31,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <Link
-              href="/tasarimlarimiz"
+              href="/urunler"
               className="hover:text-custom-teal w-full sm:w-auto"
             >
               <button className="mt-6 px-8 py-3 bg-custom-color5 text-white rounded-full shadow-md hover:bg-custom-color5/80 transition">
