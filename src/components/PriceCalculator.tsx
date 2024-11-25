@@ -325,7 +325,17 @@ const PriceCalculator: React.FC<PriceCalculatorProps> = ({
       }
     }
 
-    return totalPrice;
+    const roundPrice = (price: number): number => {
+      const fractionalPart = price % 1; // Ondalık kısmı hesapla
+      if (fractionalPart >= 0.05) {
+        return Math.ceil(price); // Yukarı yuvarla
+      } else {
+        return Math.floor(price); // Aşağı yuvarla
+      }
+    };
+
+    // Yuvarlanmış fiyatı döndür
+    return roundPrice(totalPrice);
   };
 
   return (
