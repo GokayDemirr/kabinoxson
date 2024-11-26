@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const metadata: Metadata = {
-  title: "Kabinox | Paslanmaz Duşkabinin Tek Adresi",
-  description: "Paslanmaz Duşkabinin Tek Adresi",
+export const metadata: Metadata = {
+  title: "Kabinox",
+  description:
+    "Paslanmaz çelikte yenilikçi tasarımlar, titanyum kaplama ve özel tasarımlarla tanışın.",
 };
 
 export default function RootLayout({
