@@ -56,8 +56,8 @@ const Products: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen rounded-lg p-4">
-      <div className="text-black mt-12 mb-2 tracking-widest text-3xl font-light fhdustu:mt-24 fhdustu:text-5xl fhdustu:mb-12">
-        SERİLERİMİZ
+      <div className="text-black mt-12 mb-2 tracking-widest text-2xl font-light fhdustu:mt-24 fhdustu:text-4xl fhdustu:mb-12">
+        ÜRÜNLER
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         {series.map((serie) => (

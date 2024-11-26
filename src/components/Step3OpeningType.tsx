@@ -8,8 +8,8 @@ interface Step3Props {
 }
 
 const openingTypes = [
-  { label: "Menteşeli", gif: "/menteseliyeni.gif", value: "menteseli" },
-  { label: "Sürgülü", gif: "/surguluyeni.gif", value: "surgulu" },
+  { label: "Menteşeli", gif: "/Kabinox_Menteseli.gif", value: "menteseli" },
+  { label: "Sürgülü", gif: "/Kabinox_Surgulu.gif", value: "surgulu" },
 ];
 
 const Step3OpeningType: React.FC<Step3Props> = ({

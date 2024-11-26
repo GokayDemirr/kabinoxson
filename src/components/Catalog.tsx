@@ -6,7 +6,6 @@ const Catalog: React.FC = () => {
       <div className="w-full h-full">
         <iframe
           allowFullScreen
-          scrolling="no"
           className="w-full h-full border-0"
           src="https://heyzine.com/flip-book/e6a9cfe812.html"
         />

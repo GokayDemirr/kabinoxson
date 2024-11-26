@@ -29,12 +29,12 @@ export default function Home() {
             Paslanmaz çelikte yenilikçi tasarımlar, titanyum kaplama ve özel
             tasarım farkıyla tanışın.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+          <div className="flex flex-col gap-4 justify-center items-center sm:flex-row sm:gap-6">
             <Link
               href="/urunler"
               className="hover:text-custom-teal w-full sm:w-auto"
             >
-              <button className="mt-6 px-8 py-3 bg-custom-color5 text-white rounded-full shadow-md hover:bg-custom-color5/80 transition">
+              <button className="mt-6 px-8 py-3 bg-custom-color5 text-white rounded-full shadow-md hover:bg-custom-color5/80 transition w-full">
                 Tasarımlarımız
               </button>
             </Link>
@@ -42,7 +42,7 @@ export default function Home() {
               href="/kabinimi-bul"
               className="hover:text-custom-teal w-full sm:w-auto"
             >
-              <button className="mt-6 px-8 py-3 bg-custom-color5 text-white rounded-full shadow-md hover:bg-custom-color5/80 transition">
+              <button className="mt-6 px-8 py-3 bg-custom-color5 text-white rounded-full shadow-md hover:bg-custom-color5/80 transition w-full">
                 Kabinimi Bul
               </button>
             </Link>

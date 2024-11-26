@@ -17,7 +17,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
     <Link href={`/series/${seriesName}`}>
       <div className="rounded-lg flex flex-col items-center cursor-pointer">
         <img src={imageUrl} alt={seriesName} className="rounded-md mb-2" />
-        <h2 className="tracking-wider text-3xl font-light">{seriesName}</h2>
+        <h2 className="tracking-wider text-2xl font-light">{seriesName}</h2>
         <p className="text-gray-700 ">{seriesDescription}</p>
       </div>
     </Link>
