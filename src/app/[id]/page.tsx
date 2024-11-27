@@ -8,6 +8,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import PriceCalculator from "@/components/PriceCalculator";
 import IconComponent from "@/components/IconComponent";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // React icons kullanıyoruz
+import ImageModal from "@/components/ImageModal";
 
 interface DimensionPriceOption {
   dimension: { min: string; max: string };
@@ -66,6 +67,8 @@ const ProductDetail: React.FC = () => {
     null
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
 
@@ -158,6 +161,15 @@ const ProductDetail: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const openImageModal = (image: string) => {
+    setSelectedImage(image);
+  };
+
+  // Modal'ı kapatma fonksiyonu
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -200,16 +212,17 @@ const ProductDetail: React.FC = () => {
                 alt={product.seriesName}
                 width={600}
                 height={600}
-                className="rounded-xl object-cover w-full h-auto"
+                className="rounded-xl object-cover w-full h-auto cursor-pointer"
+                onClick={() =>
+                  openImageModal(product.images[currentImageIndex])
+                } // Resme tıklayınca modal açılır
               />
               <div className="flex gap-4 justify-center mt-4">
                 {product.images.map((image, index) => (
                   <div
                     key={index}
-                    className={`w-16 h-16 md:w-32 md:h-32 cursor-pointer ${
-                      index === currentImageIndex ? "" : ""
-                    }`}
-                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-16 h-16 md:w-32 md:h-32 cursor-pointer`}
+                    onClick={() => openImageModal(image)}
                   >
                     <Image
                       src={image}
@@ -302,6 +315,9 @@ const ProductDetail: React.FC = () => {
       {isModalOpen && (
         <PriceCalculator product={product} closeModal={closeModal} />
       )}{" "}
+      {selectedImage && (
+        <ImageModal image={selectedImage} onClose={closeImageModal} />
+      )}
     </div>
   );
 };
