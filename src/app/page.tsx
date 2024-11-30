@@ -27,7 +27,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="w-full relative">
           <ImageSlider images={images} />
-          <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col justify-center items-center bg-black bg-opacity-30 px-6 sm:px-10 md:px-12 lg:px-20">
+          <div className="absolute top-0 left-0 w-full min-h-screen flex flex-col justify-center items-center bg-black bg-opacity-10 px-6 sm:px-10 md:px-12 lg:px-20">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white text-center">
               KABINOX
             </h1>

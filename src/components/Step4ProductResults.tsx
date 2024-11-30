@@ -38,23 +38,33 @@ const Step4ProductResults: React.FC<Step4ProductResultsProps> = ({
         const product = doc.data();
         if (product.isPassive) return;
 
+        // Genişlik kontrolleri (iki yönlü kontrol)
         const width1Valid =
-          dimensions.width1 >= product.dimensions.width1Min &&
-          dimensions.width1 <= product.dimensions.width1Max;
+          (dimensions.width1 >= product.dimensions.width1Min &&
+            dimensions.width1 <= product.dimensions.width1Max) ||
+          (dimensions.width1 >= product.dimensions.width2Min &&
+            dimensions.width1 <= product.dimensions.width2Max);
+
         const width2Valid =
           dimensions.width2 === 0 ||
+          (dimensions.width2 >= product.dimensions.width1Min &&
+            dimensions.width2 <= product.dimensions.width1Max) ||
           (dimensions.width2 >= product.dimensions.width2Min &&
             dimensions.width2 <= product.dimensions.width2Max);
+
+        // Derinlik kontrolü
         const depth1Valid =
           dimensions.depth1 === 0 ||
           (dimensions.depth1 >= product.dimensions.depth1Min &&
             dimensions.depth1 <= product.dimensions.depth1Max);
 
+        // Yükseklik, açılma tipi ve şekil kontrolleri
         const heightValid =
           height !== null && product.heightOptions.includes(height);
         const openingStyleValid = selectedOpeningType === product.openingStyle;
         const shapeValid = selectedShape === product.cornerShape;
 
+        // Tüm kriterler sağlanıyorsa ürünü listeye ekle
         if (
           width1Valid &&
           width2Valid &&
