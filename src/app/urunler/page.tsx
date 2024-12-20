@@ -11,6 +11,7 @@ interface Series {
   seriesName: string;
   seriesDescription: string;
   isPassive: boolean;
+  brandName: string; // brandName alanını da ekledik
 }
 
 const Products: React.FC = () => {
@@ -20,17 +21,19 @@ const Products: React.FC = () => {
   useEffect(() => {
     const fetchSeries = async () => {
       const seriesRef = collection(firestore, "Series");
+
       const snapshot = await getDocs(seriesRef);
       const fetchedSeries: Series[] = [];
       snapshot.forEach((doc) => {
         const data = doc.data();
-        if (!data.isPassive) {
+        if (!data.isPassive && data.brandName === "Kabinox") {
           fetchedSeries.push({
             id: doc.id,
             imageUrl: data.imageUrl,
             seriesName: data.seriesName,
             seriesDescription: data.seriesDescription,
             isPassive: data.isPassive,
+            brandName: data.brandName, // brandName alanını da ekledik
           });
         }
       });

@@ -71,7 +71,8 @@ const Step4ProductResults: React.FC<Step4ProductResultsProps> = ({
           depth1Valid &&
           heightValid &&
           openingStyleValid &&
-          shapeValid
+          shapeValid &&
+          product.brandName === "Kabinox" // Brand name kontrolü eklendi
         ) {
           fetchedProducts.push(product);
         }
